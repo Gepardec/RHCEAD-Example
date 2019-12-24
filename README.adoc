@@ -1,0 +1,4 @@
+= RHCEAD Example application
+
+This repository holds a sample application which illustrates the usage of JEE technologies
+part of the Red Hat RHCEAD certification.
