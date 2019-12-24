@@ -24,6 +24,7 @@ out/
 .idea/
 
 *.iml
+*.zip
 modules.xml
 .idea/misc.xml
 *.ipr
