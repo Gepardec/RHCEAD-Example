@@ -20,7 +20,7 @@ public class LibraryService {
     private EntityManager em;
 
 
-    @TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public LibraryDto byId(final long id) {
         final Library entity = em.find(Library.class, id);
         if (entity != null) {
@@ -29,14 +29,39 @@ public class LibraryService {
         return null;
     }
 
-    @TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<LibraryDto> searchByName(final String name) {
+        final List<Library> libraries = em.createNamedQuery("searchLibraryByName").setParameter("name", name).getResultList();
+        return LibraryTranslator.toDto(libraries);
+    }
+
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<LibraryDto> searchByLibraryId(final long id) {
+        final List<Library> libraries = em.createNamedQuery("searchLibraryByBookId").setParameter("id", id).getResultList();
+        return LibraryTranslator.toDto(libraries);
+    }
+
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<LibraryDto> list() {
         return LibraryTranslator.toDto(em.createNamedQuery("listAllLibraries").getResultList());
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public LibraryDto createOrUpdate(final LibraryDto dto) {
-        return dto;
+        Library library;
+        if (dto.getId() == null) {
+            library = new Library();
+        } else {
+            library = em.find(Library.class, dto.getId());
+        }
+
+        if (library == null) {
+            return null;
+        }
+        library.setName(dto.getName());
+        library = em.merge(library);
+
+        return LibraryTranslator.toDto(library);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)

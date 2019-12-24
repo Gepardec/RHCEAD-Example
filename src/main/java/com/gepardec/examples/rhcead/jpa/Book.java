@@ -12,7 +12,9 @@ import java.time.LocalDateTime;
 @Entity()
 @Table(name = "BOOK")
 @NamedQueries({
-        @NamedQuery(name = "listAllBooks", query = "SELECT entity FROM Book entity")
+        @NamedQuery(name = "listAllBooks", query = "SELECT entity FROM Book entity"),
+        @NamedQuery(name = "searchBookByName", query = "SELECT entity FROM Book entity WHERE entity.name = :name"),
+        @NamedQuery(name = "searchBookByLibraryId", query = "SELECT entity FROM Book entity WHERE entity.library.id = :id")
 })
 public class Book {
 

@@ -14,7 +14,9 @@ import java.util.Set;
 @Entity
 @Table(name = "LIBRARY")
 @NamedQueries({
-        @NamedQuery(name = "listAllLibraries", query = "SELECT entity FROM Library entity")
+        @NamedQuery(name = "listAllLibraries", query = "SELECT entity FROM Library entity"),
+        @NamedQuery(name = "searchLibraryByName", query = "SELECT entity FROM Library entity WHERE entity.name = :name"),
+        @NamedQuery(name = "searchLibraryByBookId", query = "SELECT entity FROM Library entity INNER JOIN entity.books book WHERE book.id = :id")
 })
 public class Library {
 
@@ -39,7 +41,7 @@ public class Library {
     private LocalDateTime updatedDate;
 
     @NotNull
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "library")
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, mappedBy = "library")
     private Set<Book> books = new HashSet<>(0);
 
     public Library() {

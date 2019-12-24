@@ -1,6 +1,7 @@
 package com.gepardec.examples.rhcead.ejb;
 
 import com.gepardec.examples.rhcead.dto.BookDto;
+import com.gepardec.examples.rhcead.jpa.Book;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,11 +15,11 @@ public class BookTranslator {
     private BookTranslator() {
     }
 
-    public static List<BookDto> toDto(final List<com.gepardec.examples.rhcead.jpa.Book> dtos) {
-        return dtos.stream().map(BookTranslator::toDto).collect(Collectors.toList());
+    static List<BookDto> toDto(final List<Book> entities) {
+        return entities.stream().map(BookTranslator::toDto).collect(Collectors.toList());
     }
 
-    public static BookDto toDto(com.gepardec.examples.rhcead.jpa.Book entity) {
+    static BookDto toDto(Book entity) {
         final BookDto dto = new BookDto();
         dto.setId(entity.getId());
         dto.setName(entity.getName());

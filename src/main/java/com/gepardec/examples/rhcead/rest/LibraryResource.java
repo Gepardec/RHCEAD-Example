@@ -9,9 +9,11 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
@@ -32,6 +34,26 @@ public class LibraryResource {
     }
 
     @GET
+    @Path("/search/name")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
+    public Response byName(@Size(min = 1, max = 255, message = "{name.size}")
+                           @NotNull(message = "{name.null}")
+                           @QueryParam("value") final String name) {
+        final List<LibraryDto> result = service.searchByName(name);
+        return Response.ok(result).build();
+    }
+
+    @GET
+    @Path("/search/library")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
+    public Response byBookId(@Min(value = 1, message = "{libraryId.min}")
+                             @NotNull(message = "{libraryId.null}")
+                             @QueryParam("value") final Long id) {
+        final List<LibraryDto> result = service.searchByLibraryId(id);
+        return Response.ok(result).build();
+    }
+
+    @GET
     @Path("/{id}")
     @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
     public Response get(@Min(value = 0, message = "{id.min}") @PathParam("id") long id) {
@@ -46,14 +68,19 @@ public class LibraryResource {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(@Valid @NotNull LibraryDto libraryDto) {
-        return null;
+        return Response.ok(service.createOrUpdate(libraryDto)).build();
     }
 
     @PUT
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@Min(value = 0, message = "{id.min}") @PathParam("id") long id, @Valid @NotNull LibraryDto libraryDto) {
-        return null;
+        libraryDto.setId(id);
+        final LibraryDto updatedDto = service.createOrUpdate(libraryDto);
+        if (updatedDto == null) {
+            return Response.status(HttpStatus.SC_NOT_FOUND).entity(String.format("Library with id '%d' not found", id)).build();
+        }
+        return Response.ok(updatedDto).build();
     }
 
     @DELETE

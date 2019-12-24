@@ -2,11 +2,14 @@ package com.gepardec.examples.rhcead.ejb;
 
 import com.gepardec.examples.rhcead.dto.BookDto;
 import com.gepardec.examples.rhcead.jpa.Book;
+import com.gepardec.examples.rhcead.jpa.Library;
 
 import javax.ejb.*;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
@@ -19,7 +22,7 @@ public class BookService {
     @PersistenceContext(unitName = "library")
     private EntityManager em;
 
-    @TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public BookDto byId(final long id) {
         final Book entity = em.find(Book.class, id);
         if (entity != null) {
@@ -28,14 +31,43 @@ public class BookService {
         return null;
     }
 
-    @TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<BookDto> searchByName(final String name) {
+        final List<Book> books = em.createNamedQuery("searchBookByName").setParameter("name", name).getResultList();
+        return BookTranslator.toDto(books);
+    }
+
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<BookDto> searchByLibraryId(final long id) {
+        final List<Book> books = em.createNamedQuery("searchBookByLibraryId").setParameter("id", id).getResultList();
+        return BookTranslator.toDto(books);
+    }
+
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<BookDto> list() {
         return BookTranslator.toDto(em.createNamedQuery("listAllBooks").getResultList());
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public BookDto createOrUpdate(final BookDto bookDto) {
-        return null;
+        Book book;
+        if (bookDto.getId() == null) {
+            book = new Book();
+        } else {
+            book = em.find(Book.class, bookDto.getId());
+        }
+        final Library library = Optional.ofNullable(em.find(Library.class, bookDto.getLibraryId()))
+                .orElseThrow(() -> new EntityNotFoundException("LibraryId not found in database"));
+
+        if (book == null) {
+            return null;
+        }
+
+        book.setName(bookDto.getName());
+        book.setLibrary(library);
+        book = em.merge(book);
+
+        return BookTranslator.toDto(book);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)

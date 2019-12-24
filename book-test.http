@@ -1,0 +1,24 @@
+## List all books
+GET http://localhost:8080/book
+
+### Get book with id
+GET http://localhost:8080/book/1
+
+### Get book by name
+GET http://localhost:8080/book/search/name?value=book_22
+
+### Create book
+POST http://localhost:8080/book
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "Updated first book",
+  "libraryId": 1
+}
+
+### Delete book
+DELETE http://localhost:8080/book/1
+
+###
+

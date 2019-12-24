@@ -14,11 +14,11 @@ public class LibraryTranslator {
     private LibraryTranslator() {
     }
 
-    public static List<LibraryDto> toDto(final List<com.gepardec.examples.rhcead.jpa.Library> dtos) {
+    static List<LibraryDto> toDto(final List<com.gepardec.examples.rhcead.jpa.Library> dtos) {
         return dtos.stream().map(LibraryTranslator::toDto).collect(Collectors.toList());
     }
 
-    public static LibraryDto toDto(com.gepardec.examples.rhcead.jpa.Library entity) {
+    static LibraryDto toDto(com.gepardec.examples.rhcead.jpa.Library entity) {
         final LibraryDto dto = new LibraryDto();
         dto.setId(entity.getId());
         dto.setName(entity.getName());
