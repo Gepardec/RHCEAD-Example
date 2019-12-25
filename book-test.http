@@ -12,8 +12,16 @@ POST http://localhost:8080/book
 Content-Type: application/json
 
 {
-  "id": 1,
-  "name": "Updated first book",
+  "name": "new_book_updated",
+  "libraryId": 1
+}
+
+### Update book
+PUT http://localhost:8080/book/5
+Content-Type: application/json
+
+{
+  "name": "new_book_updated",
   "libraryId": 1
 }
 

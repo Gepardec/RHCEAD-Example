@@ -2,6 +2,7 @@ package com.gepardec.examples.rhcead.rest;
 
 import com.gepardec.examples.rhcead.dto.BookDto;
 import com.gepardec.examples.rhcead.ejb.BookService;
+import com.gepardec.examples.rhcead.jms.BookNotifier;
 import org.apache.http.HttpStatus;
 
 import javax.enterprise.context.RequestScoped;
@@ -25,6 +26,9 @@ public class BookResource {
 
     @Inject
     private BookService service;
+
+    @Inject
+    private BookNotifier notifier;
 
     @GET
     @Path("/")
@@ -70,7 +74,10 @@ public class BookResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(@NotNull(message = "{rest.book.null}")
                            @Valid BookDto bookDto) {
-        return Response.ok(service.createOrUpdate(bookDto)).build();
+        bookDto.setId(null);
+        final BookDto result = service.createOrUpdate(bookDto);
+        notifier.sendBookCreated(result);
+        return Response.ok(result).build();
     }
 
     @PUT
@@ -84,6 +91,8 @@ public class BookResource {
         final BookDto updatedDto = service.createOrUpdate(bookDto);
         if (updatedDto == null) {
             return Response.status(HttpStatus.SC_NOT_FOUND).entity(String.format("Book with id '%d' not found", id)).build();
+        } else {
+            notifier.sendBookUpdated(bookDto);
         }
         return Response.ok(updatedDto).build();
     }
@@ -91,9 +100,12 @@ public class BookResource {
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.TEXT_PLAIN)
-    public Response update(@Min(value = 0, message = "{id.min}")
+    public Response delete(@Min(value = 0, message = "{id.min}")
                            @PathParam("id") long id) {
         if (service.delete(id)) {
+            final BookDto bookDto = new BookDto();
+            bookDto.setId(id);
+            notifier.sendBookDeleted(bookDto);
             return Response.ok().build();
         }
         return Response.status(HttpStatus.SC_NOT_FOUND).entity(String.format("Book with id '%d' not found", id)).build();

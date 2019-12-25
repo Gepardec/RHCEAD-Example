@@ -3,12 +3,13 @@ package com.gepardec.examples.rhcead.dto;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 12/24/2019
  */
-public class BookDto {
+public class BookDto implements Serializable {
 
     private Long id;
 

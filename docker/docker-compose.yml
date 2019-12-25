@@ -1,0 +1,12 @@
+version: '3'
+services:
+  eap:
+    build: ./eap-7.2.0
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+      - "9990:9990"
+      - "9999:9999"
+      - "57188:57188"
+    volumes:
+      - "./deployments:/opt/jboss/jboss-eap-7.2/standalone/deployments:rw"

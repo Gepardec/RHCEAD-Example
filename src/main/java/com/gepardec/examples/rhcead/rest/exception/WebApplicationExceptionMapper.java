@@ -1,4 +1,4 @@
-package com.gepardec.examples.rhcead.rest;
+package com.gepardec.examples.rhcead.rest.exception;
 
 import org.slf4j.Logger;
 

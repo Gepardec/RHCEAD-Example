@@ -1,4 +1,4 @@
-embed-server --std-out=echo --server-config=standalone-full-ha.xml
+embed-server --std-out=echo --server-config=standalone-full.xml
 jms-queue add --queue-address=BookQueue  --entries=queue/book,java:jboss/exported/jms/queue/book
 jms-queue add --queue-address=LibraryQueue  --entries=queue/library,java:jboss/exported/jms/queue/library
 stop-embedded-server
