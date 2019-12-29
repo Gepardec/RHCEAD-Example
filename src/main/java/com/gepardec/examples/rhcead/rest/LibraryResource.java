@@ -1,5 +1,6 @@
 package com.gepardec.examples.rhcead.rest;
 
+import com.gepardec.examples.rhcead.cdi.CallPublished;
 import com.gepardec.examples.rhcead.dto.LibraryDto;
 import com.gepardec.examples.rhcead.ejb.LibraryService;
 import org.apache.http.HttpStatus;
@@ -20,6 +21,7 @@ import java.util.List;
  * @since 12/24/2019
  */
 @RequestScoped
+@CallPublished
 @Path("/library")
 public class LibraryResource {
 

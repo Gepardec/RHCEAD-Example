@@ -1,7 +1,6 @@
 FROM jboss/base-jdk:11
 
-ENV JBOSS_HOME="/opt/jboss/jboss-eap-7.2" \
-    JAVA_OPTS="-Djava.io.tmpdir=/tmp -Djava.net.preferIPv4Stack=true -Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0"
+ENV JBOSS_HOME="/opt/jboss/jboss-eap-7.2"
 
 ARG ADMIN_USERNAME='admin'
 ARG ADMIN_PASWORD='admin!123'
@@ -23,12 +22,14 @@ RUN yum update -y \
     && rm -rf ${JBOSS_HOME}/standalone/configuration/standalone_xml_history/* \
     && rm -rf /tmp/*
 
+ENV JAVA_OPTS="${JAVA_OPTS} -Djava.io.tmpdir=/tmp -Djava.net.preferIPv4Stack=true -Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0"
+
 USER jboss
 
-EXPOSE 8080 8443 9990 9999 57188
+EXPOSE 8080 8443 9990 9999 8787
 
 VOLUME ${JBOSS_HOME}/standalone/deployments
 
 ENTRYPOINT ["/bin/sh", "-c"]
 
-CMD ["${JBOSS_HOME}/bin/standalone.sh -c standalone-full.xml -b 0.0.0.0 --debug 57188"]
+CMD ["${JBOSS_HOME}/bin/standalone.sh -c standalone-full.xml -b 0.0.0.0 --debug"]

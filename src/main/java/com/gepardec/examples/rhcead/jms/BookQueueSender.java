@@ -14,13 +14,13 @@ import javax.jms.Queue;
  * @since 12/25/2019
  */
 @RequestScoped
-public class BookNotifier {
+public class BookQueueSender {
 
     @Inject
     private Logger log;
 
     // The queue we send the notification to
-    @Resource(name = "java:jboss/exported/jms/queue/book")
+    @Resource(lookup = "java:jboss/exported/jms/queue/book")
     private Queue queue;
 
     // The JMSContext used to create the producer which sends the message
@@ -44,7 +44,7 @@ public class BookNotifier {
             final String message = String.format(messageTemplate, book.getId());
             final JMSMessage jmsMessage = new JMSMessage(message, book);
             jmxCtx.createProducer().send(queue, jmsMessage);
-            log.info(message);
+            log.info("Notified with Message: " + message);
         } catch (Exception e) {
             log.error("Notifying book creation failed", e);
         }
