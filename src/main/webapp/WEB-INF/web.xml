@@ -1,0 +1,35 @@
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+         http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+
+    <security-role>
+        <description>The administrator role</description>
+        <role-name>ADMIN</role-name>
+    </security-role>
+    <security-role>
+        <description>The user role</description>
+        <role-name>USER</role-name>
+    </security-role>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>book-resource</web-resource-name>
+            <url-pattern>/book</url-pattern>
+        </web-resource-collection>
+        <web-resource-collection>
+            <web-resource-name>library-resource</web-resource-name>
+            <url-pattern>/library</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>ADMIN</role-name>
+            <role-name>USER</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>RealmUsersRoles</realm-name>
+    </login-config>
+</web-app>

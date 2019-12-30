@@ -1,4 +1,70 @@
+# Configure JMS queues
 embed-server --std-out=echo --server-config=standalone-full.xml
+batch
 jms-queue add --queue-address=BookQueue  --entries=queue/book,java:jboss/exported/jms/queue/book
 jms-queue add --queue-address=LibraryQueue  --entries=queue/library,java:jboss/exported/jms/queue/library
-stop-embedded-server
+run-batch
+
+/subsystem=logging/console-handler=CONSOLE:change-log-level(level="TRACE")
+/subsystem=logging/logger=org.jboss.security:add(level=TRACE,handlers=["CONSOLE"])
+/subsystem=logging/logger=org.wildfly.extension.elytron:add(level=TRACE,handlers=["CONSOLE"])
+/subsystem=logging/logger=javax.security:add(level=TRACE,handlers=["CONSOLE"])
+/subsystem=logging/logger=org.wildfly.security:add(level=TRACE,handlers=["CONSOLE"])
+#  /subsystem=logging/root-logger=ROOT:write-attribute(name="level", value="TRACE")
+
+# Workraound, otherwise elytron jdbc-realm cannot be created because ExampleDS is missing !!!!
+# https://developer.jboss.org/thread/280279
+####
+/subsystem=elytron/identity-realm=elytron-jdbc-realm:add(identity='dummy identity realm')
+/subsystem=elytron/identity-realm=elytron-jdbc-realm:remove
+####
+
+batch
+/subsystem=datasources/data-source=LibraryDS:add(\
+    connection-url="jdbc:h2:file:${env.JBOSS_HOME}/db/library;AUTO_SERVER=TRUE;DB_CLOSE_DELAY=-1;FILE_LOCK=SOCKET", \
+    jndi-name="java:jboss/datasources/LibraryDS", \
+    driver-name=h2, \
+    user-name="sa", \
+    password="sa")
+
+# Elytron JDBC REALM
+/subsystem=elytron/jdbc-realm=elytron-jdbc-realm:add(\
+principal-query=[{\
+    sql="SELECT PASSWORD FROM LIBRARY.USER WHERE USERNAME = ?", \
+    data-source="LibraryDS", \
+    clear-password-mapper={\
+        password-index=1}\
+},\
+{\
+    sql="SELECT UR.ROLE FROM LIBRARY.USER_ROLES UR INNER JOIN LIBRARY.USER U ON U.ID = UR.USER_ID WHERE U.USERNAME = ?", \
+    data-source="LibraryDS", \
+    attribute-mapping=[{index=1, to=roles}]\
+}])
+
+# Elytron ROLE decoder
+/subsystem=elytron/simple-role-decoder=from-roles-attribute:add(attribute=roles)
+
+# Add Security Domain
+/subsystem=elytron/security-domain=elytron-security-domain:add(default-realm=elytron-jdbc-realm, \
+    realms=[{\
+        realm=elytron-jdbc-realm, \
+        role-decoder=from-roles-attribute\
+    }], permission-mapper=default-permission-mapper)
+
+# HTTP_Authentication Factory
+/subsystem=elytron/http-authentication-factory=elytron-http-auth:add(\
+    http-server-mechanism-factory=global,\
+    security-domain=elytron-security-domain,\
+    mechanism-configurations=[{\
+        mechanism-name=BASIC,\
+        mechanism-realm-configurations=[{realm-name=RealmUsersRoles}]},\
+        {\
+                mechanism-name=PLAIN,\
+                mechanism-realm-configurations=[{realm-name=RealmUsersRoles}]}])
+
+# Configure Undertow's application security domain
+/subsystem=undertow/application-security-domain=elytron-application-security-domain:add(\
+    http-authentication-factory=elytron-http-auth)
+/subsystem=ejb3/application-security-domain=elytron-application-security-domain:add(security-domain=elytron-security-domain)
+run-batch
+

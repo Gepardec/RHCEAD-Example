@@ -20,7 +20,7 @@ public class Book {
 
     @NotNull
     @Id
-    @SequenceGenerator(name = "bookSequence", sequenceName = "BOOK_SEQUENCE", initialValue = 0, allocationSize = 1)
+    @SequenceGenerator(name = "bookSequence", sequenceName = "BOOK_SEQUENCE", initialValue = 1, allocationSize = 1)
     @GeneratedValue(generator = "bookSequence", strategy = GenerationType.SEQUENCE)
     @Column(name = "ID", insertable = false, updatable = false)
     private Long id;
@@ -47,7 +47,7 @@ public class Book {
     }
 
     @PrePersist
-    void oreUpdate() {
+    void prePersist() {
         createdDate = updatedDate = LocalDateTime.now();
     }
 

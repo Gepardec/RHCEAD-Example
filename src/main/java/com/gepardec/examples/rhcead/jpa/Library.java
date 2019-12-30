@@ -22,7 +22,7 @@ public class Library {
 
     @NotNull
     @Id
-    @SequenceGenerator(name = "librarySequence", sequenceName = "LIBRARY_SEQUENCE", initialValue = 0, allocationSize = 1)
+    @SequenceGenerator(name = "librarySequence", sequenceName = "LIBRARY_SEQUENCE", initialValue = 1, allocationSize = 1)
     @GeneratedValue(generator = "librarySequence", strategy = GenerationType.SEQUENCE)
     @Column(name = "ID", insertable = false, updatable = false)
     private Long id;
@@ -34,11 +34,11 @@ public class Library {
 
     @NotNull
     @Column(name = "CREATED_AT", updatable = false)
-    private LocalDateTime createdDate;
+    private LocalDateTime createdAt;
 
     @NotNull
     @Column(name = "UPDATED_AT")
-    private LocalDateTime updatedDate;
+    private LocalDateTime updatedAt;
 
     @NotNull
     @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, mappedBy = "library")
@@ -48,13 +48,13 @@ public class Library {
     }
 
     @PrePersist
-    void oreUpdate() {
-        createdDate = updatedDate = LocalDateTime.now();
+    void prePersist() {
+        createdAt = updatedAt = LocalDateTime.now();
     }
 
     @PreUpdate
     void preUpdate() {
-        updatedDate = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
     public Long getId() {
@@ -73,20 +73,20 @@ public class Library {
         this.name = name;
     }
 
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
+    public void setCreatedAt(LocalDateTime createdDate) {
+        this.createdAt = createdDate;
     }
 
-    public LocalDateTime getUpdatedDate() {
-        return updatedDate;
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdatedDate(LocalDateTime updatedDate) {
-        this.updatedDate = updatedDate;
+    public void setUpdatedAt(LocalDateTime updatedDate) {
+        this.updatedAt = updatedDate;
     }
 
     public Set<Book> getBooks() {

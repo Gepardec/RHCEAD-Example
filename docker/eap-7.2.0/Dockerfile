@@ -10,9 +10,7 @@ ADD ./config.cli /tmp/config.cli
 
 USER root
 
-RUN yum update -y \
-    && yum clean all \
-    && usermod -a -G 0 jboss \
+RUN usermod -a -G 0 jboss \
     && unzip /tmp/eap.zip -d /opt/jboss \
     && mv /tmp/config.cli ${JBOSS_HOME}/config.cli \
     && ${JBOSS_HOME}/bin/add-user.sh ${ADMIN_USERNAME} ${ADMIN_PASWORD} \
@@ -29,6 +27,7 @@ USER jboss
 EXPOSE 8080 8443 9990 9999 8787
 
 VOLUME ${JBOSS_HOME}/standalone/deployments
+VOLUME ${JBOSS_HOME}/db
 
 ENTRYPOINT ["/bin/sh", "-c"]
 

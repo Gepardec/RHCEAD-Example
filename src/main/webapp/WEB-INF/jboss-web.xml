@@ -1,3 +1,8 @@
-<jboss-web>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE jboss-web>
+<jboss-web xmlns="http://www.jboss.com/xml/ns/javaee"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+>
     <context-root>/</context-root>
+    <security-domain>elytron-application-security-domain</security-domain>
 </jboss-web>

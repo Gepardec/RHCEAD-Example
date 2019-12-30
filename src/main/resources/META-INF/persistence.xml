@@ -5,20 +5,22 @@
     http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
              version="2.2">
     <persistence-unit name="library">
-        <jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source>
+        <jta-data-source>java:jboss/datasources/LibraryDS</jta-data-source>
+        <class>com.gepardec.examples.rhcead.jpa.User</class>
         <class>com.gepardec.examples.rhcead.jpa.Book</class>
         <class>com.gepardec.examples.rhcead.jpa.Library</class>
         <properties>
             <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
             <property name="javax.persistence.schema-generation.create-source" value="script-then-metadata"/>
             <property name="javax.persistence.schema-generation.create-script-source" value="META-INF/create.sql"/>
+            <property name="javax.persistence.schema-generation.drop-source" value="script-then-metadata"/>
             <property name="javax.persistence.schema-generation.drop-script-source" value="META-INF/drop.sql"/>
             <property name="javax.persistence.sql-load-script-source" value="META-INF/load.sql"/>
             <property name="javax.persistence.schema-generation.create-database-schemas" value="true"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
             <property name="hibernate.default_schema" value="LIBRARY"/>
-            <property name="hibernate.show_sql" value="false"/>
-            <property name="hibernate.format_sql" value="false"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
             <property name="org.hibernate.flushMode" value="COMMIT"/>
         </properties>
     </persistence-unit>

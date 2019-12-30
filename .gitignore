@@ -6,6 +6,7 @@
 bin/
 tmp/
 docker/deployments
+docker/db
 *.tmp
 *.bak
 *.swp
