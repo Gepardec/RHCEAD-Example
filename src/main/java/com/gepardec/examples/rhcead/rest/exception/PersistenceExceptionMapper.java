@@ -6,6 +6,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -28,6 +29,6 @@ public class PersistenceExceptionMapper implements ExceptionMapper<PersistenceEx
     @Override
     public Response toResponse(PersistenceException e) {
         log.error(String.format("Persistence error on uri: '%s'", uriInfo.getPath()), e);
-        return Response.serverError().entity("Sorry, a database error occurred").build();
+        return Response.serverError().type(MediaType.TEXT_PLAIN_TYPE).entity("Sorry, a database error occurred").build();
     }
 }

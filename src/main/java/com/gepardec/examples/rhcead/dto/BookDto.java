@@ -17,8 +17,8 @@ public class BookDto implements Serializable {
     @Size(min = 1, max = 255, message = "{name.size}")
     private String name;
 
-    @NotNull(message = "{libraryId.null}")
-    @Min(value = 0, message = "{libraryId.min}")
+    @NotNull(message = "{library.id.notnull}")
+    @Min(value = 0, message = "{library.id.min}")
     private Long libraryId;
 
     public BookDto() {

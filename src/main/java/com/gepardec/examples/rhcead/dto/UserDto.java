@@ -3,6 +3,7 @@ package com.gepardec.examples.rhcead.dto;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
@@ -10,27 +11,39 @@ import javax.validation.constraints.Size;
  */
 public class UserDto {
 
-    @NotNull
-    @Size(min = 2, max = 50, message = "{user.username.notnull}")
+    private Long id;
+
+    @NotNull(message = "{user.username.notnull}")
+    @Size(min = 2, max = 50, message = "{user.username.size}")
     private String username;
 
-    @NotNull
-    @Size(min = 8, max = 100, message = "{user.password.notnull}")
+    @NotNull(message = "{user.password.notnull}")
+    @Size(min = 8, max = 100, message = "{user.password.size}")
     private String password;
 
-    @NotNull
-    @Size(min = 2, max = 100, message = "{user.firstname.notnull}")
+    @NotNull(message = "{user.firstname.notnull}")
+    @Size(min = 2, max = 100, message = "{user.firstname.size}")
     private String firstname;
 
-    @NotNull
-    @Size(min = 2, max = 100, message = "{user.lastname.notnull}")
+    @NotNull(message = "{user.lastname.notnull}")
+    @Size(min = 2, max = 100, message = "{user.lastname.size}")
     private String lastname;
 
     @NotNull(message = "{user.email.notnull}")
     @Email(message = "{user.email.email}")
     private String email;
 
+    private List<RoleDto> roles;
+
     public UserDto() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getUsername() {
@@ -71,5 +84,13 @@ public class UserDto {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<RoleDto> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<RoleDto> roles) {
+        this.roles = roles;
     }
 }

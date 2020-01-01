@@ -39,13 +39,20 @@ public class BookService {
 
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<BookDto> searchByLibraryId(final long id) {
-        final List<Book> books = em.createNamedQuery("searchBookByLibraryId").setParameter("id", id).getResultList();
+        final List<Book> books = em.createNamedQuery("searchBookByLibraryId").setParameter("libraryId", id).getResultList();
         return BookTranslator.toDto(books);
     }
 
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<BookDto> list() {
         return BookTranslator.toDto(em.createNamedQuery("listAllBooks").getResultList());
+    }
+
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<BookDto> searchBookByLibraryNameAndUserName(final String libraryName, final String name) {
+        return BookTranslator.toDto(em.createNamedQuery("searchBookByUsername")
+                .setParameter("libraryName", libraryName)
+                .setParameter("username", name).getResultList());
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -64,7 +71,6 @@ public class BookService {
         }
 
         book.setName(bookDto.getName());
-        book.setLibrary(library);
         book = em.merge(book);
 
         return BookTranslator.toDto(book);

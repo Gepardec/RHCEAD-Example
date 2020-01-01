@@ -15,6 +15,9 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "USER")
+@NamedQueries({
+        @NamedQuery(name = "listAllUsers", query = "SELECT entity FROM User entity")
+})
 public class User implements Serializable {
 
     @Id
@@ -62,6 +65,9 @@ public class User implements Serializable {
             joinColumns = @JoinColumn(name = "USER_ID"))
     @Column(name = "ROLE", nullable = false)
     private Set<Role> roles = new HashSet<>(0);
+
+    @OneToMany(mappedBy = "owner")
+    private Set<Library> libraries = new HashSet<>(0);
 
     public User() {
     }
@@ -148,6 +154,14 @@ public class User implements Serializable {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public Set<Library> getLibraries() {
+        return libraries;
+    }
+
+    public void setLibraries(Set<Library> libraries) {
+        this.libraries = libraries;
     }
 
     @Override

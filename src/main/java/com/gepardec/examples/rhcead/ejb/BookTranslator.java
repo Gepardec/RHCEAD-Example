@@ -23,7 +23,7 @@ public class BookTranslator {
         final BookDto dto = new BookDto();
         dto.setId(entity.getId());
         dto.setName(entity.getName());
-        dto.setLibraryId(entity.getLibrary().getId());
+//        dto.setLibraryId(entity.getLibrary().getId());
 
         return dto;
     }

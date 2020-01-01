@@ -4,6 +4,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
@@ -14,7 +16,8 @@ import java.time.LocalDateTime;
 @NamedQueries({
         @NamedQuery(name = "listAllBooks", query = "SELECT entity FROM Book entity"),
         @NamedQuery(name = "searchBookByName", query = "SELECT entity FROM Book entity WHERE entity.name = :name"),
-        @NamedQuery(name = "searchBookByLibraryId", query = "SELECT entity FROM Book entity WHERE entity.library.id = :id")
+        @NamedQuery(name = "searchBookByLibraryId", query = "SELECT entity FROM Book entity INNER JOIN entity.libraries library WHERE library.id = :libraryId"),
+        @NamedQuery(name = "searchBookByUsername", query = "SELECT entity FROM Book entity INNER JOIN entity.libraries library INNER JOIN library.owner user WHERE library.name = lower(:libraryName) AND lower(user.username) = lower(:username)")
 })
 public class Book {
 
@@ -27,7 +30,7 @@ public class Book {
 
     @NotNull
     @Size(min = 0, max = 255)
-    @Column(name = "NAME")
+    @Column(name = "NAME", unique = true)
     private String name;
 
     @NotNull
@@ -38,10 +41,8 @@ public class Book {
     @Column(name = "UPDATED_AT")
     private LocalDateTime updatedDate;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "LIBRARY_ID", referencedColumnName = "ID")
-    private Library library;
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "books")
+    private Set<Library> libraries = new HashSet<>(0);
 
     public Book() {
     }
@@ -49,11 +50,13 @@ public class Book {
     @PrePersist
     void prePersist() {
         createdDate = updatedDate = LocalDateTime.now();
+        name = (name != null) ? name.toLowerCase() : null;
     }
 
     @PreUpdate
     void preUpdate() {
         updatedDate = LocalDateTime.now();
+        name = (name != null) ? name.toLowerCase() : null;
     }
 
     public Long getId() {
@@ -88,12 +91,12 @@ public class Book {
         this.updatedDate = updatedDate;
     }
 
-    public Library getLibrary() {
-        return library;
+    public Set<Library> getLibraries() {
+        return libraries;
     }
 
-    public void setLibrary(Library library) {
-        this.library = library;
+    public void setLibraries(Set<Library> libraries) {
+        this.libraries = libraries;
     }
 
     @Override

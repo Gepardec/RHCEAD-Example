@@ -17,6 +17,8 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 /**
+ * Protected via 'security-constraints' defined in web.xml.
+ *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 12/24/2019
  */
@@ -30,68 +32,77 @@ public class LibraryResource {
 
     @GET
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
     public Response list() {
         return Response.ok(service.list()).build();
     }
 
     @GET
-    @Path("/search/name")
+    @Path("/{name}")
     @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
-    public Response byName(@Size(min = 1, max = 255, message = "{name.size}")
-                           @NotNull(message = "{name.null}")
-                           @QueryParam("value") final String name) {
+    public Response byName(@PathParam("name")
+                           @Size(min = 1, max = 255, message = "{name.size}")
+                           @NotNull(message = "{name.null}") final String name) {
         final List<LibraryDto> result = service.searchByName(name);
         return Response.ok(result).build();
     }
 
     @GET
-    @Path("/search/library")
+    @Path("/book/{name}")
     @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
-    public Response byBookId(@Min(value = 1, message = "{libraryId.min}")
-                             @NotNull(message = "{libraryId.null}")
-                             @QueryParam("value") final Long id) {
-        final List<LibraryDto> result = service.searchByLibraryId(id);
+    public Response byBookId(@PathParam("name")
+                             @NotNull(message = "{name.notnull}") final String name) {
+        final List<LibraryDto> result = service.searchByBookName(name);
         return Response.ok(result).build();
     }
 
     @GET
     @Path("/{id}")
     @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
-    public Response get(@Min(value = 0, message = "{id.min}") @PathParam("id") long id) {
+    public Response get(@PathParam("id")
+                        @Min(value = 0, message = "{library.id.min}") long id) {
         final LibraryDto libraryDto = service.byId(id);
         if (libraryDto == null) {
-            return Response.status(HttpStatus.SC_NOT_FOUND).entity(String.format("Library with id '%d' not found", id)).build();
+            return buildNotFoundResponse(id);
         }
         return Response.ok(libraryDto).build();
     }
 
     @POST
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response create(@Valid @NotNull LibraryDto libraryDto) {
+    @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
+    public Response create(@Valid
+                           @NotNull LibraryDto libraryDto) {
         return Response.ok(service.createOrUpdate(libraryDto)).build();
     }
 
     @PUT
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@Min(value = 0, message = "{id.min}") @PathParam("id") long id, @Valid @NotNull LibraryDto libraryDto) {
+    @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
+    public Response update(@PathParam("id")
+                           @Min(value = 0, message = "{id.min}") long id,
+                           @Valid
+                           @NotNull LibraryDto libraryDto) {
         libraryDto.setId(id);
         final LibraryDto updatedDto = service.createOrUpdate(libraryDto);
         if (updatedDto == null) {
-            return Response.status(HttpStatus.SC_NOT_FOUND).entity(String.format("Library with id '%d' not found", id)).build();
+            return buildNotFoundResponse(id);
         }
         return Response.ok(updatedDto).build();
     }
 
     @DELETE
     @Path("/{id}")
-    @Produces(MediaType.TEXT_PLAIN)
-    public Response update(@Min(value = 0, message = "{id.min}") @PathParam("id") long id) {
+    @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
+    public Response update(@PathParam("id")
+                           @Min(value = 0, message = "{id.min}") long id) {
         if (service.delete(id)) {
             return Response.ok().build();
         }
+        return buildNotFoundResponse(id);
+    }
+
+    private Response buildNotFoundResponse(final long id) {
         return Response.status(HttpStatus.SC_NOT_FOUND).entity(String.format("Library with id '%d' not found", id)).build();
     }
 }

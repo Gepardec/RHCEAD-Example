@@ -18,13 +18,18 @@
             <web-resource-name>book-resource</web-resource-name>
             <url-pattern>/book</url-pattern>
         </web-resource-collection>
+        <auth-constraint>
+            <role-name>USER</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <security-constraint>
         <web-resource-collection>
             <web-resource-name>library-resource</web-resource-name>
             <url-pattern>/library</url-pattern>
         </web-resource-collection>
         <auth-constraint>
             <role-name>ADMIN</role-name>
-            <role-name>USER</role-name>
         </auth-constraint>
     </security-constraint>
 
@@ -32,4 +37,8 @@
         <auth-method>BASIC</auth-method>
         <realm-name>RealmUsersRoles</realm-name>
     </login-config>
+
+    <error-page>
+        <location>/error</location>
+    </error-page>
 </web-app>

@@ -36,8 +36,8 @@ public class LibraryService {
     }
 
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<LibraryDto> searchByLibraryId(final long id) {
-        final List<Library> libraries = em.createNamedQuery("searchLibraryByBookId").setParameter("id", id).getResultList();
+    public List<LibraryDto> searchByBookName(final String name) {
+        final List<Library> libraries = em.createNamedQuery("searchLibrariesByBookName").setParameter("bookName", name).getResultList();
         return LibraryTranslator.toDto(libraries);
     }
 

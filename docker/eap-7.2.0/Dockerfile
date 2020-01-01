@@ -31,4 +31,4 @@ VOLUME ${JBOSS_HOME}/db
 
 ENTRYPOINT ["/bin/sh", "-c"]
 
-CMD ["${JBOSS_HOME}/bin/standalone.sh -c standalone-full.xml -b 0.0.0.0 --debug"]
+CMD ["${JBOSS_HOME}/bin/standalone.sh -c standalone-full.xml -b 0.0.0.0 --debug *:8787"]

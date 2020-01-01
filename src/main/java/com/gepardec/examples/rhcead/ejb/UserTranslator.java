@@ -25,6 +25,7 @@ public class UserTranslator {
         dto.setFirstname(entity.getFirstname());
         dto.setLastname(entity.getLastname());
         dto.setEmail(entity.getEmail());
+        dto.setRoles(RoleDtoTranslator.toDtos(entity.getRoles()));
 
         return dto;
     }
