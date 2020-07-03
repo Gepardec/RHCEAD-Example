@@ -1,7 +1,11 @@
 package com.gepardec.examples.rhcead.rest;
 
+import org.slf4j.MDC;
+
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
@@ -9,4 +13,9 @@ import javax.ws.rs.core.Application;
  */
 @ApplicationPath("/")
 public class RestApplication extends Application {
+
+    public Runnable populateMDC() {
+        final Map<String, String> map = MDC.getCopyOfContextMap();
+        return () -> map.forEach(MDC::put);
+    }
 }

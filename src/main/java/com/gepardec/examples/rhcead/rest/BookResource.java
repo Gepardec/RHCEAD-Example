@@ -39,8 +39,6 @@ public class BookResource {
     @Context
     private SecurityContext securityContext;
 
-    @Context
-
     @GET
     @Path("/")
     @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})

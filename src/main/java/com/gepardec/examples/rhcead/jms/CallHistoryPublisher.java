@@ -1,5 +1,6 @@
 package com.gepardec.examples.rhcead.jms;
 
+import com.gepardec.examples.rhcead.jpa.Book_;
 import org.slf4j.Logger;
 
 import javax.annotation.Resource;

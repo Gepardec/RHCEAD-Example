@@ -8,6 +8,9 @@ import javax.ejb.*;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,7 +48,14 @@ public class BookService {
 
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<BookDto> list() {
-        return BookTranslator.toDto(em.createNamedQuery("listAllBooks").getResultList());
+        final CriteriaBuilder cb = em.getCriteriaBuilder();
+        final CriteriaQuery<Book> query = cb.createQuery(Book.class);
+        final Root<Book> root = query.from(Book.class);
+        query.select(root);
+
+        return BookTranslator.toDto(em.createQuery(query).getResultList());
+
+//        return BookTranslator.toDto(em.createNamedQuery("listAllBooks").getResultList());
     }
 
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
