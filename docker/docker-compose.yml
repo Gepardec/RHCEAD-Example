@@ -12,3 +12,4 @@ services:
     volumes:
       - "./deployments:/opt/jboss/jboss-eap-7.2/standalone/deployments:rw"
       - "./db:/opt/jboss/jboss-eap-7.2/db:rw"
+      - "./log:/opt/jboss/jboss-eap-7.2/standalone/log:rw"

@@ -1,5 +1,7 @@
 ## List all books
+## user:user is the authentication
 GET http://localhost:8080/book
+Authorization: Basic dXNlcjp1c2Vy
 
 ### Get book with id
 GET http://localhost:8080/book/1

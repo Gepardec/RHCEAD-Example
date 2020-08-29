@@ -6,6 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * Simple application scoped cache for metrics.
+ *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 12/29/2019
  */

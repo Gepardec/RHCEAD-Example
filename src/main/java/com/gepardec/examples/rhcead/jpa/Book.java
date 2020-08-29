@@ -107,7 +107,7 @@ public class Book {
         Book book = (Book) o;
 
         // If id is null than we compare instance id
-        return (id == null) ? super.equals(o) : id == book.id;
+        return (id == null) ? super.equals(o) : id.equals(book.id);
     }
 
     @Override
