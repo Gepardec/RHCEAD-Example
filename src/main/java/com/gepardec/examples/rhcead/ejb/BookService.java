@@ -2,12 +2,18 @@ package com.gepardec.examples.rhcead.ejb;
 
 import com.gepardec.examples.rhcead.dto.BookDto;
 import com.gepardec.examples.rhcead.jpa.Book;
+import com.gepardec.examples.rhcead.jpa.Book_;
 import com.gepardec.examples.rhcead.jpa.Library;
+import com.gepardec.examples.rhcead.jpa.Library_;
 
 import javax.ejb.*;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,14 +39,21 @@ public class BookService {
 
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<BookDto> searchByName(final String name) {
-        final List<Book> books = em.createNamedQuery("searchBookByName").setParameter("name", name).getResultList();
-        return BookTranslator.toDto(books);
+        final CriteriaBuilder builder = em.getCriteriaBuilder();
+        final CriteriaQuery<Book> query = builder.createQuery(Book.class);
+        final Root<Book> root = query.from(Book.class);
+        query.where(builder.equal(root.get(Book_.NAME), name));
+        return BookTranslator.toDto(em.createQuery(query).getResultList());
     }
 
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<BookDto> searchByLibraryId(final long id) {
-        final List<Book> books = em.createNamedQuery("searchBookByLibraryId").setParameter("libraryId", id).getResultList();
-        return BookTranslator.toDto(books);
+        final CriteriaBuilder builder = em.getCriteriaBuilder();
+        final CriteriaQuery<Book> query = builder.createQuery(Book.class);
+        final Root<Book> root = query.from(Book.class);
+        var libraryJoin = root.join(Book_.LIBRARIES, JoinType.INNER);
+        libraryJoin.on(builder.equal(libraryJoin.get(Library_.ID), id));
+        return BookTranslator.toDto(em.createQuery(query).getResultList());
     }
 
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)

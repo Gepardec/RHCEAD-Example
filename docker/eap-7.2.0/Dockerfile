@@ -20,7 +20,7 @@ RUN usermod -a -G 0 jboss \
     && rm -rf ${JBOSS_HOME}/standalone/configuration/standalone_xml_history/* \
     && rm -rf /tmp/*
 
-ENV JAVA_OPTS="${JAVA_OPTS} -Djava.io.tmpdir=/tmp -Djava.net.preferIPv4Stack=true -Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0"
+ENV JAVA_OPTS="${JAVA_OPTS} -Djava.io.tmpdir=/tmp -Djava.net.preferIPv4Stack=true -Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0 -Dh2.bindAddress=0.0.0.0"
 
 USER jboss
 
